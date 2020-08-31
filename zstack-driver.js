@@ -91,8 +91,8 @@ let self;
 
 class ZStackDriver extends ZigbeeDriver {
 
-  constructor(addonManager, manifest, portName, serialPort) {
-    super(addonManager, manifest);
+  constructor(addonManager, config, portName, serialPort) {
+    super(addonManager, config);
 
     self = this;
 
@@ -115,6 +115,7 @@ class ZStackDriver extends ZigbeeDriver {
       FUNC(this, this.getExtAddr),
       FUNC(this, this.registerApp),
       FUNC(this, this.disableTCKeyExchange),
+      FUNC(this, this.setChannel), //set channel (hard code)
       FUNC(this, this.startCoordinator),
     ]);
   }
@@ -206,6 +207,19 @@ class ZStackDriver extends ZigbeeDriver {
     ]);
   }
 
+  SetChannel() {
+    const frame = {
+      type: cmdType.SREQ,
+      subsys: 'DEBUG',
+      cmd: 0x08,
+      payload: Buffer.from([0x01, 0x04, 0x00]),
+    };
+    this.queueCommandsAtFront([
+      new Command(SEND_FRAME, frame),
+      new Command(WAIT_FRAME, {type: cmdType.SRSP}),
+    ]);
+  }
+  
   startCoordinator() {
     const frame = {
       type: cmdType.SREQ,
