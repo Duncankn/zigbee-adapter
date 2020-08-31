@@ -212,7 +212,8 @@ class ZStackDriver extends ZigbeeDriver {
       type: cmdType.SREQ,
       subsys: 'DEBUG',
       cmd: 0x08,
-      payload: Buffer.from([0x01, 0x04, 0x00]),
+      payload: Buffer.from([0x01, 0x04, 0x00]), //hard code the primary channel maske to channel 21
+      //payload: Buffer.from([0x01], 0x${this.scanChannels.toString(16)}),
     };
     this.queueCommandsAtFront([
       new Command(SEND_FRAME, frame),
@@ -677,6 +678,7 @@ class ZStackDriver extends ZigbeeDriver {
       deviceType: 'coordinator',
       version: this.version,
       configuredPanId64: this.adapter.networkAddr64,
+      scanChannel: '0x${this.scanChannels.toString(16)}',
     };
   }
 
