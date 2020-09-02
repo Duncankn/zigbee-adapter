@@ -115,7 +115,7 @@ class ZStackDriver extends ZigbeeDriver {
       FUNC(this, this.getExtAddr),
       FUNC(this, this.registerApp),
       FUNC(this, this.disableTCKeyExchange),
-      FUNC(this, this.setChannel), //set channel (hard code)
+      //FUNC(this, this.setChannel), //set channel (hard code)
       FUNC(this, this.startCoordinator),
     ]);
   }
