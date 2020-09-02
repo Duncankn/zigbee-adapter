@@ -100,6 +100,13 @@ class ZStackDriver extends ZigbeeDriver {
     this.lastZDOSeq = 0;
 
     this.idSeq = 0;
+    
+    //Duncan Add for channel config.
+    let configScanChannels = this.config.scanChannels;
+    if (typeof configScanChannels === 'string') {
+      configScanChannels = parseInt(configScanChannels, 16);
+    } else if (typeof configScanChannels !== 'number') {
+      configScanChannels = 0x1ffe;
 
     this.serialPort = serialPort;
     this.unpi = new Unpi({lenBytes: 1, phy: serialPort});
@@ -212,7 +219,10 @@ class ZStackDriver extends ZigbeeDriver {
       type: cmdType.SREQ,
       subsys: 'DEBUG',
       cmd: 0x08,
-      payload: Buffer.from([0x01, 0x04, 0x00]), //hard code the primary channel maske to channel 21
+      payload: Buffer.from([
+        0x01,       //isPrimaryChannelMask 
+        0x00, 0x04  //Channel mask
+      ]), //hard code the primary channel maske to channel 21
       //payload: Buffer.from([0x01], 0x${this.scanChannels.toString(16)}),
     };
     this.queueCommandsAtFront([
@@ -678,7 +688,7 @@ class ZStackDriver extends ZigbeeDriver {
       deviceType: 'coordinator',
       version: this.version,
       configuredPanId64: this.adapter.networkAddr64,
-      scanChannels: `0x${this.scanChannels.toString(16)}`,
+      scanChannels: this.scanChannels,
     };
   }
 
