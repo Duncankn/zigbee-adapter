@@ -678,7 +678,7 @@ class ZStackDriver extends ZigbeeDriver {
       deviceType: 'coordinator',
       version: this.version,
       configuredPanId64: this.adapter.networkAddr64,
-      scanChannel: '0x${this.scanChannels.toString(16)}',
+      scanChannels: `0x${this.scanChannels.toString(16)}`,
     };
   }
 
