@@ -223,7 +223,7 @@ class ZStackDriver extends ZigbeeDriver {
       cmd: 0x08,
       payload: Buffer.from([
         0x01,       //isPrimaryChannelMask 
-        0x00, 0x04  //Channel mask
+        0x00, 0x00, 0x20, 0x00  //Channel mask
       ]), //hard code the primary channel maske to channel 21
       //payload: Buffer.from([0x01], 0x${this.scanChannels.toString(16)}),
     };
@@ -640,9 +640,9 @@ class ZStackDriver extends ZigbeeDriver {
           const nvChannels = br.nextString(4, 'hex').swapHex();
           console.log('Channels: ', nvChannels);
           if (this.scanChannels !== nvChannels) {
-            console.log(`Saving Channel mask: ${this.scanChannels} to NV ram!`);
+            console.log(`Saving Channel mask: 0x00800000 to NV ram!`);
             const pi = parseInt(this.scanChannels, 8);
-            this.writeNVItem(nvItems.ZCD_NV_CHANLIST, pi);
+            this.writeNVItem(nvItems.ZCD_NV_CHANLIST, [0x00, 0x80, 0x00, 0x00]);
           }
         }
         if ((status & 0x04) == 0) {
