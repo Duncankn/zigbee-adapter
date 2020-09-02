@@ -107,6 +107,7 @@ class ZStackDriver extends ZigbeeDriver {
       configScanChannels = parseInt(configScanChannels, 16);
     } else if (typeof configScanChannels !== 'number') {
       configScanChannels = 0x1ffe;
+    }
 
     this.serialPort = serialPort;
     this.unpi = new Unpi({lenBytes: 1, phy: serialPort});
