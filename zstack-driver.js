@@ -635,7 +635,14 @@ class ZStackDriver extends ZigbeeDriver {
           console.log('IEEE: ', br.nextString(8, 'hex').swapHex());
         }
         if ((status & 0x02) == 0) {
-          console.log('Channels: ', br.nextString(4, 'hex').swapHex());
+          //console.log('Channels: ', br.nextString(4, 'hex').swapHex());
+          const nvChannels = br.nextString(4, 'hex').swapHex();
+          console.log('Channels: ', nvChannels);
+          if (this.scanChannels !== nvChannels) {
+            console.log(`Saving Channel mask: ${this.scanChannels} to NV ram!`);
+            const pi = parseInt(this.scanChannels, 8);
+            this.writeNVItem(nvItems.ZCD_NV_CHANLIST, pi);
+          }
         }
         if ((status & 0x04) == 0) {
           const nvPANID = br.nextString(2, 'hex').swapHex();
