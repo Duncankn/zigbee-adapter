@@ -108,13 +108,20 @@ class ZStackDriver extends ZigbeeDriver {
     } else if (typeof configScanChannels !== 'number') {
       configScanChannels = 0x1ffe;
     }
-    this.scanChannels = configScanChannels;
+    this.scanChannels = configScanChannels;//
 
     this.serialPort = serialPort;
     this.unpi = new Unpi({lenBytes: 1, phy: serialPort});
 
     this.unpi.on('data', this.onZStackFrame);
-
+    // Duncan added for channel setting to NV item (hard code)
+    // The USB dongle should be factory reset.
+    // Set up the channel mask below and install on terminal by
+    // ./package.sh
+    // sudo systemctl restart mozilla-gatway
+    // restart the raspberry pi (optional)
+    // example: channel 23 (0x00800000) should be [0x00, 0x00, 0x80, 0x00]
+    this.writeNVItem(nvItems.ZCD_NV_CHANLIST, [0x00, 0x00, 0x80, 0x00]);
     this.queueInitCmds();
   }
 
@@ -215,7 +222,8 @@ class ZStackDriver extends ZigbeeDriver {
       new Command(WAIT_FRAME, {type: cmdType.SRSP}),
     ]);
   }
-
+  
+  // Add by Duncan, error appeared when using this Function.
   SetChannel() {
     const frame = {
       type: cmdType.SREQ,
@@ -639,11 +647,11 @@ class ZStackDriver extends ZigbeeDriver {
           //console.log('Channels: ', br.nextString(4, 'hex').swapHex());
           const nvChannels = br.nextString(4, 'hex').swapHex();
           console.log('Channels: ', nvChannels);
-          if (this.scanChannels !== nvChannels) {
-            console.log(`Saving Channel mask: 0x00800000 to NV ram!`);
-            const pi = parseInt(this.scanChannels, 8);
-            this.writeNVItem(nvItems.ZCD_NV_CHANLIST, [0x00, 0x80, 0x00, 0x00]);
-          }
+          //if (this.scanChannels !== nvChannels) {
+          //  console.log(`Saving Channel mask: 0x00800000 to NV ram!`);
+          //  const pi = parseInt(this.scanChannels, 8);
+          //  this.writeNVItem(nvItems.ZCD_NV_CHANLIST, [0x00, 0x80, 0x00, 0x00]);
+          //}
         }
         if ((status & 0x04) == 0) {
           const nvPANID = br.nextString(2, 'hex').swapHex();
